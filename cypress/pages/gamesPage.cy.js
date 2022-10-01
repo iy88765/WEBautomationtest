@@ -14,6 +14,12 @@ export class GamesPage {
         this.getFilterButton().click()
     }
 
-    checkFilterItem = (item) => cy.get("div[class*=dropdown]").contains(item).click()
+    clickFilterItem = (item) => cy.get("div[class*=dropdown]").contains(item).click()
+
+    getSearchResults = () => cy.get("a[class*=item]")
+
+    getEmptySearchPlaceholder = () => cy.get("div[class*=empty-search]")
+
+    closeFilter = () => this.getSearchField().click()
 }
 

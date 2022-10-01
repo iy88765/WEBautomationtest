@@ -8,6 +8,10 @@ describe('Filter', () =>{
     it('Succsesfull filtering', () =>{
         gamesPage.navigate()
         gamesPage.openDropdown()
-        gamesPage.checkFilterItem(item)
+        gamesPage.clickFilterItem(item)
+        gamesPage.getSearchResults().should('have.length', 1)
+        gamesPage.clickFilterItem(item)
+        gamesPage.getSearchResults().should('have.length', 20)
+        gamesPage.closeFilter()
     })
 })
