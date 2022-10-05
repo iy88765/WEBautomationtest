@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "a977d370-c586-4c10-8912-fc6db081aceb",
+		"name": "gorest.co.in",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "all users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"users\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8');  ",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.have.all.keys('id', 'name', 'email', 'gender', 'status');",
+							"    pm.expect(jsonData[0].id).to.be.a('number');",
+							"    pm.expect(jsonData[0].name).to.be.a('string');",
+							"    pm.expect(jsonData[0].email).to.be.a('string');",
+							"    pm.expect(jsonData[0].gender).to.be.a('string');",
+							"    pm.expect(jsonData[0].status).to.be.a('string');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData  = pm.response.json();",
+							"",
+							"pm.test(\"create user\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202])",
+							"    pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8');",
+							"    pm.expect(jsonData).to.have.all.keys('id', 'name', 'email', 'gender', 'status');    ",
+							"    pm.response.to.have.jsonBody('name', jsonData.name);",
+							"    pm.response.to.have.jsonBody('email', jsonData.email);",
+							"    pm.response.to.have.jsonBody('gender', 'female');",
+							"    pm.response.to.have.jsonBody('status', 'active');",
+							"    pm.expect(jsonData.name).to.be.a('string');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "f48879f2b12aa45a1aa591e4a27db397c33e859963f0f8769d5fff332d199353",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{$randomFirstName}}\",\n    \"email\": \"{{$randomEmail}}\",\n    \"gender\": \"female\",\n    \"status\": \"active\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const postRequest = {",
+							"  url: 'https://gorest.co.in/public/v2/users',",
+							"  method: 'POST',",
+							"  header: {",
+							"    'Authorization': 'Bearer f48879f2b12aa45a1aa591e4a27db397c33e859963f0f8769d5fff332d199353',",
+							"    'Content-Type': 'application/json',",
+							"    'User-Agent': 'PostmanRuntime/7.29.0',",
+							"    'Accept': '*/*',",
+							"    'Accept-Encoding': 'gzip, deflate, br',",
+							"    'Connection': 'keep-alive'",
+							"  },",
+							"  body: {",
+							"    mode: 'raw',",
+							"    raw: JSON.stringify({name: pm.variables.replaceIn('{{$randomFirstName}}'), email: pm.variables.replaceIn('{{$randomEmail}}'), gender: 'female', status: \"active\"})",
+							"  }",
+							"};",
+							"",
+							"pm.sendRequest(postRequest, (error, response) => {",
+							"    console.log(error ? error : response.json());",
+							"    console.log(response.json().id);",
+							"    pm.globals.set(\"userId\", response.json().id);  ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "f48879f2b12aa45a1aa591e4a27db397c33e859963f0f8769d5fff332d199353",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/{{userId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
