@@ -4,7 +4,7 @@ export class GamesPage {
 
     getSearchField = () => cy.get('input[placeholder="Search"]')
     typeSearchQuery = (searchRequest) => {
-        this.getSearchField().type(searchRequest, {delay: 100})
+        this.getSearchField().type(searchRequest, {delay: 150})
     }
 
     clearSearchField = () => this.getSearchField().clear()
